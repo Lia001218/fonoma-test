@@ -7,7 +7,7 @@ from enum import Enum
 import redis
 import os 
 
-endpoint = os.environ.get("REDIS_URL") or 'localhost'
+endpoint = os.getenv("REDIS_URL") or 'localhost'
 app = FastAPI()
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)

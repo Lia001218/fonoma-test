@@ -11,7 +11,7 @@ endpoint = os.getenv("REDIS_URL", default='localhost')
 port = 6379
 if endpoint != 'localhost':
     splits = endpoint.split(":")
-    endpoint = splits[0] + splits[1]
+    endpoint = splits[0] + ':' + splits[1]
     port = int(splits[2])
 
 app = FastAPI()

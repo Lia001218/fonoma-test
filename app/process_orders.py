@@ -7,17 +7,16 @@ from enum import Enum
 import redis
 import os 
 
-endpoint = os.getenv("REDIS_URL", default='localhost')
-port = 6379
-if endpoint != 'localhost':
-    splits = endpoint.split(":")
-    endpoint = splits[0] + ':' + splits[1]
-    port = int(splits[2])
+REDIS_URL = os.getenv("REDIS_URL")
+if REDIS_URL:
+    redis_client = redis.from_url(REDIS_URL)
+else:
+    redis_client = redis.StrictRedis(host='localhost', port=6379)
 
 app = FastAPI()
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
-redis_client = redis.StrictRedis(host=endpoint, port=port)
+
 
 class StatusModel(str,Enum):
     completed = "completed"
@@ -42,12 +41,12 @@ class Order(BaseModel):
 
 @app.post("/solution")
 def process_orders(orders : list[Order] , criterion : Annotated[CriterionEnum, Body()]):
-    log.info('processing post')
+    print('processing post')
     cache_key = f"{criterion.value}:{hash(tuple(orders))}"
-    
+    print(cache_key)
     cached_result = redis_client.get(cache_key)
     if cached_result:
-        log.info('Cache hit')
+        print('Cache hit')
         return float(cached_result)
     if criterion == CriterionEnum.all:
         result = sum(x.price * x.quantity for x in orders)
@@ -57,3 +56,6 @@ def process_orders(orders : list[Order] , criterion : Annotated[CriterionEnum, B
     redis_client.setex(cache_key, 3600, str(result))
     return result
 
+@app.get("/")
+def read_root():
+    return {"Hello": "World"}

@@ -2,6 +2,6 @@ services:
   - type: web
     name: fonoma-test
     env: docker
-    repo: https://github.com/Lia001218/fonoma-test/tree/dev
+    repo: https://github.com/Lia001218/fonoma-test
     plan: free
     autoDeploy: false

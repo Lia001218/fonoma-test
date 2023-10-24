@@ -4,4 +4,4 @@ services:
     env: docker
     repo: https://github.com/Lia001218/fonoma-test
     plan: free
-    autoDeploy: false
+    autoDeploy: true

@@ -7,11 +7,17 @@ from enum import Enum
 import redis
 import os 
 
-endpoint = os.getenv("REDIS_URL") or 'localhost'
+endpoint = os.getenv("REDIS_URL", default='localhost')
+port = 6379
+if endpoint != 'localhost':
+    splits = endpoint.split(":")
+    endpoint = splits[0] + splits[1]
+    port = int(splits[2])
+
 app = FastAPI()
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
-redis_client = redis.StrictRedis(host=endpoint, port=6379)
+redis_client = redis.StrictRedis(host=endpoint, port=port)
 
 class StatusModel(str,Enum):
     completed = "completed"
